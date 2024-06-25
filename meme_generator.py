@@ -138,9 +138,10 @@ class MemeGenerator:
 
     def overlay_face_emoji(self, img, emoji_img, position):
         # Resize emoji image proportionally to fit 1/4th of the main image
-        emoji_width = min(img.width // 4, emoji_img.width)
-        emoji_height = emoji_img.height * emoji_width // emoji_img.width
-        emoji_img = emoji_img.resize((emoji_width, emoji_height), Image.LANCZOS)
+        max_emoji_width = img.width // 4
+        max_emoji_height = img.height // 4
+
+        emoji_img.thumbnail((max_emoji_width, max_emoji_height), Image.LANCZOS)
 
         # Calculate position based on provided position tuple (x, y)
         x, y = position
@@ -184,7 +185,9 @@ class MemeGenerator:
             # Overlay a random face emoji
             if self.face_emojis:
                 emoji_img = random.choice(self.face_emojis)
-                emoji_position = (random.randint(0, width - emoji_img.width), random.randint(0, height - emoji_img.height))
+                emoji_max_x = width - emoji_img.width
+                emoji_max_y = height - emoji_img.height
+                emoji_position = (random.randint(0, emoji_max_x), random.randint(0, emoji_max_y))
                 self.overlay_face_emoji(img, emoji_img, emoji_position)
 
             # Save the meme
@@ -223,10 +226,10 @@ if __name__ == "__main__":
     # Create a MemeGenerator instance
     meme_generator = MemeGenerator(font_path, font_size)
 
-    # Generate a meme
+    # Generate a single meme
     image_path = "my_image.jpg"
-    top_text = "marr me"
-    bottom_text = "NumPy"
+    top_text = "Top Text"
+    bottom_text = "Bottom Text"
     output_path = "meme.jpg"
     meme_generator.generate_meme(image_path, top_text, bottom_text, output_path)
 
